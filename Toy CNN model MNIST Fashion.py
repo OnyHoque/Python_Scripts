@@ -20,17 +20,32 @@ X_test = X_test.reshape(-1, 28, 28, 1)
 
 model = keras.Sequential([
     keras.layers.Input((28, 28, 1)),
-    keras.layers.Conv2D(32, (3,3), activation='relu'),
+
+    keras.layers.Conv2D(64, (3,3), activation='relu', padding='same'),
+    keras.layers.Conv2D(64, (3,3), activation='relu', padding='same'),
     keras.layers.MaxPooling2D((2,2)),
-    keras.layers.Conv2D(64, (3,3), activation='relu'),
+    keras.layers.BatchNormalization(),
+
+    keras.layers.Conv2D(128, (3,3), activation='relu', padding='same'),
+    keras.layers.Conv2D(128, (3,3), activation='relu', padding='same'),
     keras.layers.MaxPooling2D((2,2)),
+    keras.layers.BatchNormalization(),
+
+    keras.layers.Conv2D(256, (3,3), activation='relu', padding='same'),
+    keras.layers.Conv2D(256, (3,3), activation='relu', padding='same'),
+    keras.layers.MaxPooling2D((2,2)),
+    keras.layers.BatchNormalization(),
+
     keras.layers.Flatten(),
-    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dense(512, activation='relu'),
+    keras.layers.Dropout(0.5),
+    keras.layers.Dense(256, activation='relu'),
+    keras.layers.Dropout(0.5),
     keras.layers.Dense(10, activation='softmax')
 ])
 
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-history = model.fit(X_train, y_train, epochs=10, validation_data=(X_val, y_val))
+history = model.fit(X_train, y_train, epochs=20, validation_data=(X_val, y_val))
 
 Y_pred = np.argmax(model.predict(X_test), axis=1)
 accuracy = accuracy_score(y_test, Y_pred),
